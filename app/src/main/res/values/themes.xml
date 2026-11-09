@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Incancelables" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/acento</item>
+        <item name="colorPrimaryVariant">@color/acento_oscuro</item>
+        <item name="colorOnPrimary">@color/texto_claro</item>
+        <item name="colorSecondary">@color/acento</item>
+        <item name="colorSecondaryVariant">@color/acento_oscuro</item>
+        <item name="colorOnSecondary">@color/texto_claro</item>
+        <item name="colorError">@color/error</item>
+        <item name="android:colorBackground">@color/fondo_pagina</item>
+        <item name="android:windowBackground">@color/fondo_pagina</item>
+        <item name="android:statusBarColor">@color/fondo_header</item>
+        <item name="android:navigationBarColor">@color/fondo_pagina</item>
+        <item name="android:textColorPrimary">@color/texto_claro</item>
+        <item name="android:textColorSecondary">@color/texto_secundario</item>
+        <item name="android:textColorHint">@color/texto_secundario</item>
+    </style>
+
+</resources>

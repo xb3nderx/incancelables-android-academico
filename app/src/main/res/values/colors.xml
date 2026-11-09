@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fondo_pagina">#17192d</color>
+    <color name="fondo_contenido">#313764</color>
+    <color name="fondo_header">#1f223f</color>
+    <color name="acento">#d8830f</color>
+    <color name="acento_oscuro">#b06a0a</color>
+    <color name="tarjeta">#ecece3</color>
+    <color name="texto_claro">#ffffff</color>
+    <color name="texto_secundario">#d6d6d6</color>
+    <color name="texto_sobre_tarjeta">#1f223f</color>
+    <color name="borde">#4a4f74</color>
+    <color name="error">#dc3545</color>
+    <color name="error_fondo">#26DC3545</color>
+    <color name="error_texto">#ffb3bb</color>
+    <color name="ic_launcher_background">#1f223f</color>
+</resources>

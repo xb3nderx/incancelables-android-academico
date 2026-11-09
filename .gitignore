@@ -1,0 +1,45 @@
+# Documentación de trabajo local: el README de la raíz es la documentación pública.
+docs/
+
+# Gradle y productos de compilación (en cualquier módulo).
+.gradle/
+**/.gradle/
+build/
+**/build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Configuración local de Android Studio y otras herramientas.
+.idea/
+**/.idea/
+*.iml
+.vscode/
+local.properties
+**/local.properties
+
+# Claves de firma y configuración local de servicios.
+*.jks
+*.keystore
+*.p12
+*.pfx
+key.properties
+keystore.properties
+google-services.json
+
+# Archivos temporales y del sistema operativo.
+*.log
+*.tmp
+*.temp
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Recurso original no referenciado por el código Android (se conserva localmente).
+recursos-originales/
