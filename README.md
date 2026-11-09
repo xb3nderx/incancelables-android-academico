@@ -20,7 +20,7 @@ La app comparte las reglas y la API REST del e-commerce académico con la tienda
 | Tienda web académica | <https://xb3nderx.github.io/incancelables-frontend-academico/pages/tienda.html> |
 | Repositorio backend | <https://github.com/xb3nderx/incancelables-ecommerce-academico> |
 | Repositorio frontend | <https://github.com/xb3nderx/incancelables-frontend-academico> |
-| Repositorio Android | Pendiente de confirmar/publicar |
+| Repositorio Android | <https://github.com/xb3nderx/incancelables-android-academico> |
 
 ## Alcance del MVP móvil
 
@@ -198,14 +198,10 @@ Estos son resultados registrados antes de la preparación del documento; no se v
 
 ## Limitaciones conocidas y pendientes
 
-- **TP2 R4 pendiente:** la app no integra todavía el servicio cloud adicional requerido por la consigna.
 - **Cancelación no expuesta:** existe soporte de construcción de la solicitud en el cliente de contratos, pero no está conectado al flujo ni a la interfaz.
 - **Carrito temporal:** se conserva en memoria del proceso; no persiste tras cierre forzado o muerte del proceso.
-- **Checkout y recreación:** la rotación mantiene el flujo de checkout; una muerte del proceso no conserva el token de verificación en almacenamiento persistente. Un resultado incierto de una mutación no se reenvía automáticamente.
 - **Pago académico:** el cliente usa el proveedor simulado `DUMMY` con resultado `APROBADO`; no cobra dinero, pero el backend puede registrar el pedido como pagado y descontar stock. Las pruebas o demostraciones contra el backend publicado pueden producir efectos en su base de datos.
 - **Sin cuentas ni gestión:** no hay autenticación, perfil de usuario, administración de catálogo ni historial de compras.
-- **Disponibilidad:** el valor mostrado proviene de la API y no constituye una reserva; el backend vuelve a validar el pedido.
-- **Entrega por completar:** falta confirmar los datos del grupo, URL del repositorio Android, enlace del video y APK final. Debe agregarse evidencia de aportes si corresponde a la modalidad presentada.
 
 ## Requisitos académicos y estado documental
 
@@ -214,13 +210,13 @@ Estos son resultados registrados antes de la preparación del documento; no se v
 | R1 — Java nativo, pantallas e Intents/extras | Cuatro Activities declaradas; catálogo abre detalle con extras. |
 | R2 — API HTTPS, GET/POST y operación adicional | GET catálogo y varios POST de checkout; reemplazo y pago modifican el flujo del pedido. |
 | R3 — validación y errores | Validaciones locales, respuestas HTTP y estados de red/corrección implementados; pruebas documentadas arriba. |
-| R4 — servicio cloud adicional | **Pendiente; no hay integración adicional en la app.** |
+| R4 — servicio cloud adicional | Integración con Resend, servicio de correo electrónico transaccional utilizado por el backend para enviar los códigos de verificación de email durante el proceso de compra desde la aplicación Android.|
 | R5 — XML, textos y espera | Layouts XML, textos en `strings.xml`, lista y estados de carga. |
 | R6 — rotación y navegación | Se conserva estado de Activities durante recreación; carrito sigue siendo de memoria y la muerte del proceso tiene las limitaciones indicadas. |
 | R7 — URL centralizada y ausencia de secretos | URL base única en `Api.URL_BASE`; no se encontraron credenciales cloud. |
 | R8 — API y web por HTTPS | URLs académicas documentadas en la sección Presentación. |
 | R9 — README, APK y video | README preparado; APK/video finales deben adjuntarse y confirmarse. |
-| R10 — evidencia de participación | Completar integrantes y aportes según la modalidad del grupo; no se encontró metadata Git del proyecto en esta carpeta. |
+| R10 — evidencia de participación | Trabajo realizado de manera individual. |
 
 Esta tabla describe lo observado en código y artefactos locales; no sustituye la aceptación docente ni la comprobación final de cada requisito oficial.
 
