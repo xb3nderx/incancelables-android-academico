@@ -39,14 +39,13 @@
                     android:background="@color/fondo_contenido"
                     android:animateFirstView="false" />
 
-                <TextView
+                <LinearLayout
                     android:id="@+id/detalle_imagen_indicador"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:textColor="@color/texto_secundario"
-                    android:textSize="18sp"
+                    android:orientation="horizontal"
                     android:visibility="gone" />
 
                 <TextView

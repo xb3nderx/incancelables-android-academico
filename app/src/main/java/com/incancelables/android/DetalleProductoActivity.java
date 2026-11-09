@@ -2,15 +2,16 @@ package com.incancelables.android;
 
 import android.os.Bundle;
 import android.content.Intent;
-import android.view.GestureDetector;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
+import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -33,16 +34,22 @@ public class DetalleProductoActivity extends AppCompatActivity {
     public static final String EXTRA_IMAGENES_ALT = "com.incancelables.android.extra.IMAGENES_ALT";
     public static final String EXTRA_IMAGENES_ORDEN = "com.incancelables.android.extra.IMAGENES_ORDEN";
     private static final String ESTADO_IMAGEN_SELECCIONADA = "detalle_imagen_seleccionada";
+    private static final int UMBRAL_DESPLAZAMIENTO_DP = 40;
+    private static final int ZONA_TACTIL_PUNTO_DP = 40;
 
     private Producto producto;
     private Button botonAgregar;
     private TextView estadoCarrito;
     private TextView disponibilidadVista;
     private ViewFlipper galeria;
-    private TextView indicadorGaleria;
+    private LinearLayout indicadorGaleria;
     private CargadorImagenes cargadorImagenes;
     private int imagenSeleccionada;
     private String firmaGaleria;
+    private int umbralDeslizamientoPx;
+    private float inicioTactoX;
+    private float inicioTactoY;
+    private boolean deslizamientoProcesado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,62 +204,76 @@ public class DetalleProductoActivity extends AppCompatActivity {
     }
 
     private void configurarGestosGaleria() {
-        GestureDetector detector = new GestureDetector(this,
-                new GestureDetector.SimpleOnGestureListener() {
-                    @Override
-                    public boolean onDown(android.view.MotionEvent evento) {
-                        return true;
-                    }
+        float densidad = getResources().getDisplayMetrics().density;
+        umbralDeslizamientoPx = Math.max(
+                Math.round(UMBRAL_DESPLAZAMIENTO_DP * densidad),
+                ViewConfiguration.get(this).getScaledTouchSlop());
+        galeria.setOnTouchListener((vista, evento) -> {
+            int accion = evento.getActionMasked();
+            if (accion == MotionEvent.ACTION_DOWN) {
+                inicioTactoX = evento.getX();
+                inicioTactoY = evento.getY();
+                deslizamientoProcesado = false;
+                return true;
+            }
+            if (accion == MotionEvent.ACTION_MOVE || accion == MotionEvent.ACTION_UP) {
+                evaluarDeslizamiento(evento.getX() - inicioTactoX,
+                        evento.getY() - inicioTactoY);
+            }
+            return true;
+        });
+    }
 
-                    @Override
-                    public boolean onFling(android.view.MotionEvent inicio,
-                                           android.view.MotionEvent fin,
-                                           float velocidadX, float velocidadY) {
-                        float desplazamientoX = fin.getX() - inicio.getX();
-                        float desplazamientoY = fin.getY() - inicio.getY();
-                        if (Math.abs(desplazamientoX) < 50
-                                || Math.abs(desplazamientoX) <= Math.abs(desplazamientoY)) {
-                            return false;
-                        }
-                        mostrarImagen(imagenSeleccionada + (desplazamientoX < 0 ? 1 : -1));
-                        return true;
-                    }
-                });
-        galeria.setOnTouchListener((vista, evento) -> detector.onTouchEvent(evento));
+    private void evaluarDeslizamiento(float desplazamientoX, float desplazamientoY) {
+        if (deslizamientoProcesado) return;
+        if (Math.abs(desplazamientoX) < umbralDeslizamientoPx
+                || Math.abs(desplazamientoX) <= Math.abs(desplazamientoY)) {
+            return;
+        }
+        deslizamientoProcesado = true;
+        mostrarImagen(imagenSeleccionada + (desplazamientoX < 0 ? 1 : -1));
     }
 
     private void mostrarImagen(int indice) {
         int total = galeria.getChildCount();
         if (total <= 1) return;
-        imagenSeleccionada = (indice + total) % total;
+        // Sin navegacion circular: se detiene en la primera y en la ultima imagen.
+        int destino = Math.max(0, Math.min(total - 1, indice));
+        if (destino == imagenSeleccionada) return;
+        imagenSeleccionada = destino;
         galeria.setDisplayedChild(imagenSeleccionada);
         actualizarIndicadorGaleria();
     }
 
     private void actualizarIndicadorGaleria() {
         int total = galeria.getChildCount();
+        indicadorGaleria.removeAllViews();
         if (total <= 1) {
             indicadorGaleria.setVisibility(View.GONE);
             return;
         }
-        SpannableStringBuilder puntos = new SpannableStringBuilder();
-        for (int i = 0; i < total; i++) {
-            if (i > 0) puntos.append("   ");
-            int inicio = puntos.length();
-            puntos.append(i == imagenSeleccionada ? "●" : "○");
-            puntos.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this,
-                            i == imagenSeleccionada ? R.color.acento : R.color.borde)),
-                    inicio, puntos.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        indicadorGaleria.setText(puntos);
-        indicadorGaleria.setTextColor(ContextCompat.getColor(this, R.color.texto_secundario));
-        indicadorGaleria.setVisibility(View.VISIBLE);
+        int zonaTactilPx = Math.round(
+                ZONA_TACTIL_PUNTO_DP * getResources().getDisplayMetrics().density);
         List<Producto.Imagen> imagenes = producto.getImagenes();
-        String alt = imagenes.isEmpty() ? producto.getNombre()
-                : imagenes.get(imagenSeleccionada).getAlt();
-        indicadorGaleria.setContentDescription(getString(R.string.detalle_imagen_seleccionada,
-                imagenSeleccionada + 1, total, alt == null || alt.trim().isEmpty()
-                        ? producto.getNombre() : alt));
+        for (int i = 0; i < total; i++) {
+            boolean seleccionada = i == imagenSeleccionada;
+            TextView punto = new TextView(this);
+            punto.setText(seleccionada ? "●" : "○");
+            punto.setTextColor(ContextCompat.getColor(this,
+                    seleccionada ? R.color.acento : R.color.borde));
+            punto.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            punto.setGravity(Gravity.CENTER);
+            punto.setLayoutParams(new LinearLayout.LayoutParams(zonaTactilPx, zonaTactilPx));
+            String alt = imagenes != null && i < imagenes.size()
+                    ? imagenes.get(i).getAlt() : "";
+            punto.setContentDescription(getString(R.string.detalle_imagen_seleccionada,
+                    i + 1, total, alt == null || alt.trim().isEmpty()
+                            ? producto.getNombre() : alt));
+            final int indice = i;
+            punto.setOnClickListener(v -> mostrarImagen(indice));
+            indicadorGaleria.addView(punto);
+        }
+        indicadorGaleria.setVisibility(View.VISIBLE);
     }
 
     private static String firmaDeImagenes(List<Producto.Imagen> imagenes) {
