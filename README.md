@@ -3,10 +3,11 @@
 **Trabajo Práctico Integrador N.º 2 — UPSO**  
 **Tema:** aplicación móvil nativa para el MVP de e-commerce Incancelables.  
 **Tecnologías:** Java, Android SDK, layouts XML y API REST sobre HTTPS.  
-**Compatibilidad mínima declarada:** Android 6.0.1 (API 23).  
+**Compatibilidad mínima declarada:** Android 6.0 (API 23) o posterior.  
 **Fecha de entrega indicada en la consigna:** 24 de noviembre de 2026, 23:59.
 
-> **Datos académicos por completar antes de entregar:** grupo e integrantes, URL definitiva del repositorio Android, enlace al video de demostración y ubicación de la APK de depuración. No se consignan aquí porque no están definidos en los archivos del proyecto inspeccionados.
+**Autor:** Facundo Araujo.  
+**Modalidad:** individual.
 
 ## Presentación
 
@@ -21,10 +22,12 @@ La app comparte las reglas y la API REST del e-commerce académico con la tienda
 | Repositorio backend | <https://github.com/xb3nderx/incancelables-ecommerce-academico> |
 | Repositorio frontend | <https://github.com/xb3nderx/incancelables-frontend-academico> |
 | Repositorio Android | <https://github.com/xb3nderx/incancelables-android-academico> |
+| Video de demostración | <https://youtu.be/MPW4hA3gDBA> |
+| APK de depuración | `app-debug.apk` (entrega en el campus virtual) |
 
 ## Alcance del MVP móvil
 
-La implementación inspeccionada incluye:
+La implementación incluye:
 
 - Consulta HTTPS del catálogo y presentación de estados de carga, lista vacía, error y reintento.
 - Navegación nativa entre catálogo, detalle, carrito y checkout.
@@ -125,9 +128,9 @@ El catálogo de detalle no tiene un endpoint propio: los datos se pasan por Inte
 - **Railway:** aloja la API académica PHP/Apache; el backend usa MySQL/MariaDB. Android accede a la API y a las imágenes públicas por HTTPS.
 - **Resend:** servicio de correo utilizado por el backend para enviar códigos de verificación. Android no integra el SDK ni llama directamente a Resend.
 - **GitHub Pages:** publica el frontend web académico; es otro cliente de la API, no una dependencia de ejecución de la app Android.
-- **Servicio cloud adicional en Android (TP2 R4): no implementado en el código inspeccionado.** No hay Firebase Authentication, Firestore, FCM, Storage ni otra integración cloud de la app. El backend Railway por sí solo no satisface el requisito de un servicio cloud adicional. Este requisito debe resolverse y demostrarse antes de considerar completa la entrega.
+- **Servicio cloud adicional en Android (TP2 R4):** no implementado. Railway y GitHub Pages corresponden al TP1 y Resend se integra en el backend, no directamente en Android. La incorporación de FCM para notificar estados de pedido o Firebase Authentication para cuentas de clientes constituye una posible ampliación futura.
 
-No se requiere `google-services.json` para la configuración actual porque no se detectó un SDK de Google Services/Firebase en las dependencias o el código. Si se incorpora un servicio cloud, habrá que documentar su configuración y, si corresponde, sus reglas de producción sin publicar claves privadas.
+No se requiere `google-services.json` porque la aplicación no integra Firebase ni Google Services.
 
 ## Estructura del proyecto
 
@@ -161,7 +164,7 @@ IncancelablesAndroid/
 
 - Android Studio con Android SDK Platform 35 y Build Tools compatibles.
 - JDK compatible con Android Gradle Plugin 8.7.3; el entorno local registrado en el checkpoint utiliza JDK 21.
-- Para compatibilidad mínima: dispositivo o emulador Android 6.0.1/API 23 o posterior.
+- Para compatibilidad mínima: dispositivo o emulador Android 6.0/API 23 o posterior.
 - Acceso a Internet para consultar el backend e imágenes HTTPS.
 
 ### Configuración
@@ -183,51 +186,50 @@ gradlew.bat testDebugUnitTest
 gradlew.bat connectedDebugAndroidTest
 ```
 
-La APK de depuración se genera normalmente en `app/build/outputs/apk/debug/app-debug.apk`. Estos comandos se documentan como instrucciones; no se ejecutaron al preparar este README.
+La APK de depuración se genera en `app/build/outputs/apk/debug/app-debug.apk`. La compilación de depuración y la ejecución de las pruebas unitarias se completaron satisfactoriamente durante el desarrollo.
 
 ## Compatibilidad y pruebas
 
-`minSdk` está configurado en **23**, correspondiente a Android 6.0.1, y `compileSdk`/`targetSdk` en 35. El checkpoint del proyecto registra pruebas en un Samsung Galaxy J2 Prime SM-G532M con Android 6.0.1/API 23.
+`minSdk` está configurado en **23** (Android 6.0 o posterior), y `compileSdk`/`targetSdk` en 35. Se eligió API 23 porque las pruebas se realizaron en un Samsung Galaxy J2 Prime SM-G532M con Android 6.0.1 (API 23), que no permite instalar aplicaciones con un `minSdk` superior. Esta decisión permitió realizar las pruebas funcionales e instrumentadas en un dispositivo físico.
 
-El código contiene pruebas JVM para modelo y carrito, y pruebas instrumentadas para API/catálogo, checkout, imágenes y respuestas. En los resultados locales ya existentes se observan:
+El código contiene pruebas JVM para modelo y carrito, y pruebas instrumentadas para API/catálogo, checkout, imágenes y respuestas. Los resultados registrados son:
 
 - **5 pruebas JVM aprobadas**, en los resultados de `ProductoTest` y `CarritoTest` del 9/11/2026.
-- Un archivo de resultados de dispositivo con **18 pruebas instrumentadas aprobadas**, ejecutadas en `SM-G532M - 6.0.1` el 8/11/2026.
+- **18 pruebas instrumentadas aprobadas**, ejecutadas en `SM-G532M - 6.0.1` el 8/11/2026.
 
-Estos son resultados registrados antes de la preparación del documento; no se volvieron a ejecutar. No se ejecutó Gradle para esta tarea. La validación final de entrega debe repetir las pruebas con el código vigente y conservar el resultado de compilación e instrumentación.
+Los resultados corresponden a las ejecuciones registradas en las fechas indicadas.
 
-## Limitaciones conocidas y pendientes
+## Limitaciones conocidas
 
 - **Cancelación no expuesta:** existe soporte de construcción de la solicitud en el cliente de contratos, pero no está conectado al flujo ni a la interfaz.
 - **Carrito temporal:** se conserva en memoria del proceso; no persiste tras cierre forzado o muerte del proceso.
 - **Pago académico:** el cliente usa el proveedor simulado `DUMMY` con resultado `APROBADO`; no cobra dinero, pero el backend puede registrar el pedido como pagado y descontar stock. Las pruebas o demostraciones contra el backend publicado pueden producir efectos en su base de datos.
 - **Sin cuentas ni gestión:** no hay autenticación, perfil de usuario, administración de catálogo ni historial de compras.
 
-## Requisitos académicos y estado documental
+## Requisitos académicos y alcance de la implementación
 
 | Requisito TP2 | Situación observada |
 | --- | --- |
-| R1 — Java nativo, pantallas e Intents/extras | Cuatro Activities declaradas; catálogo abre detalle con extras. |
+| R1 — Java nativo, pantallas e Intents/extras | Cuatro Activities; catálogo abre detalle con extras. Se mantiene minSdk 23 por compatibilidad con el dispositivo físico de pruebas. No se implementó devolución de resultado entre pantallas ni GET de producto por ID. |
 | R2 — API HTTPS, GET/POST y operación adicional | GET catálogo y varios POST de checkout; reemplazo y pago modifican el flujo del pedido. |
 | R3 — validación y errores | Validaciones locales, respuestas HTTP y estados de red/corrección implementados; pruebas documentadas arriba. |
-| R4 — servicio cloud adicional | Integración con Resend, servicio de correo electrónico transaccional utilizado por el backend para enviar los códigos de verificación de email durante el proceso de compra desde la aplicación Android.|
+| R4 — servicio cloud adicional | No implementado directamente en Android. Resend es utilizado por el backend; Railway y GitHub Pages corresponden al TP1. |
 | R5 — XML, textos y espera | Layouts XML, textos en `strings.xml`, lista y estados de carga. |
 | R6 — rotación y navegación | Se conserva estado de Activities durante recreación; carrito sigue siendo de memoria y la muerte del proceso tiene las limitaciones indicadas. |
-| R7 — URL centralizada y ausencia de secretos | URL base única en `Api.URL_BASE`; no se encontraron credenciales cloud. |
+| R7 — URL centralizada y ausencia de secretos | URL base única en `Api.URL_BASE`; sin credenciales cloud en el código. |
 | R8 — API y web por HTTPS | URLs académicas documentadas en la sección Presentación. |
-| R9 — README, APK y video | README preparado; APK/video finales deben adjuntarse y confirmarse. |
+| R9 — README, APK y video | README en el repositorio, APK de depuración entregada en el campus y [video de demostración](https://youtu.be/MPW4hA3gDBA). |
 | R10 — evidencia de participación | Trabajo realizado de manera individual. |
 
-Esta tabla describe lo observado en código y artefactos locales; no sustituye la aceptación docente ni la comprobación final de cada requisito oficial.
+Esta tabla documenta el alcance de la implementación entregada.
 
 ## Repositorios relacionados
 
 - **Backend académico — TP Integrador N.º 1:** [incancelables-ecommerce-academico](https://github.com/xb3nderx/incancelables-ecommerce-academico). API REST PHP y base de datos del MVP.
 - **Frontend académico — TP Integrador N.º 1:** [incancelables-frontend-academico](https://github.com/xb3nderx/incancelables-frontend-academico). Tienda web que consume el mismo backend.
-- **Android — TP Integrador N.º 2:** URL del repositorio pendiente de confirmación/publicación.
+- **Android — TP Integrador N.º 2:** [incancelables-android-academico](https://github.com/xb3nderx/incancelables-android-academico). Aplicación móvil nativa.
 
-El README alojado actualmente en el repositorio frontend consultado presenta el contenido del README de e-commerce/backend. Para contratos y arquitectura del servidor se contrastó con el README local del backend; para Android prevalecen la consigna oficial y el código de esta aplicación.
 
 ## Conclusión
 
-La aplicación ya ofrece un recorrido móvil nativo desde el catálogo hasta el pago simulado y reutiliza el backend académico compartido con la tienda web. La documentación distingue las funciones verificables de las brechas de entrega. En particular, la integración cloud adicional de R4, los datos de publicación/equipo y la evidencia final (APK y video) requieren confirmación antes de presentar el TP2 como completo.
+La aplicación ofrece un recorrido móvil nativo desde el catálogo hasta el pago simulado y reutiliza el backend académico compartido con la tienda web. El proyecto fue desarrollado individualmente y validado en un dispositivo físico. Como posibles ampliaciones se contemplan la integración de un servicio cloud propio de Android y una consulta individual de productos por ID.
